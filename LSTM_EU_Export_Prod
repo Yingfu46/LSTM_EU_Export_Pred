@@ -3,10 +3,10 @@
 # 
 # This notebook is used to test LSTM model for the Statistics Awards 3 for Extra-Eu Export of Goods. It get the data from Eurostat for all EU countries. 
 # 
-# **This notebook is from Kaggle.**
+# **This notebook is running at Kaggle.**
 # 
 
-# %% [code] {"jupyter":{"outputs_hidden":false},"execution":{"iopub.status.busy":"2024-12-27T19:15:22.051158Z","iopub.execute_input":"2024-12-27T19:15:22.0515Z","iopub.status.idle":"2024-12-27T19:15:22.409972Z","shell.execute_reply.started":"2024-12-27T19:15:22.051462Z","shell.execute_reply":"2024-12-27T19:15:22.409134Z"}}
+# %% [code] {"jupyter":{"outputs_hidden":false},"execution":{"iopub.status.busy":"2024-12-30T21:37:30.275744Z","iopub.execute_input":"2024-12-30T21:37:30.276085Z","iopub.status.idle":"2024-12-30T21:37:30.674891Z","shell.execute_reply.started":"2024-12-30T21:37:30.276059Z","shell.execute_reply":"2024-12-30T21:37:30.673860Z"}}
 import numpy as np # linear algebra
 import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
 
@@ -18,8 +18,8 @@ import os
 # %% [markdown]
 # ## 1. Import Python packages and set up
 
-# %% [code] {"jupyter":{"outputs_hidden":false},"execution":{"iopub.status.busy":"2024-12-27T19:15:22.410929Z","iopub.execute_input":"2024-12-27T19:15:22.411276Z","iopub.status.idle":"2024-12-27T19:15:22.41861Z","shell.execute_reply.started":"2024-12-27T19:15:22.411252Z","shell.execute_reply":"2024-12-27T19:15:22.417822Z"}}
-fcst_mon = pd.Timestamp('Dec, 2024')
+# %% [code] {"jupyter":{"outputs_hidden":false},"execution":{"iopub.status.busy":"2024-12-30T21:37:30.676107Z","iopub.execute_input":"2024-12-30T21:37:30.676627Z","iopub.status.idle":"2024-12-30T21:37:30.684462Z","shell.execute_reply.started":"2024-12-30T21:37:30.676601Z","shell.execute_reply":"2024-12-30T21:37:30.683358Z"}}
+fcst_mon = pd.Timestamp('December, 2024')
 fcst_mon
 
 # %% [markdown]
@@ -29,13 +29,13 @@ fcst_mon
 # https://statistics-awards.eu/nowcasting/. Most of the data are available from Eurostat: 
 # https://ec.europa.eu/eurostat/databrowser/view/nrg_cb_oilm__custom_7625136/default/table?lang=en.
 # 
-# Extra-EU exports:
+# Intra-EU exports:
 # 
 # Trade flows cover all goods entering (imports) or leaving (exports) the statistical territories of the EU Member States. Intra-EU refers to all transactions occurring within the EU. 
 # 
 # The task of each team is to nowcast the values for all 6 months between October 2024 and March 2025.
 
-# %% [code] {"jupyter":{"outputs_hidden":false},"execution":{"iopub.status.busy":"2024-12-27T19:15:22.420329Z","iopub.execute_input":"2024-12-27T19:15:22.420612Z","iopub.status.idle":"2024-12-27T19:15:23.853791Z","shell.execute_reply.started":"2024-12-27T19:15:22.420582Z","shell.execute_reply":"2024-12-27T19:15:23.852991Z"}}
+# %% [code] {"jupyter":{"outputs_hidden":false},"execution":{"iopub.status.busy":"2024-12-30T21:37:30.686546Z","iopub.execute_input":"2024-12-30T21:37:30.686793Z","iopub.status.idle":"2024-12-30T21:37:32.316778Z","shell.execute_reply.started":"2024-12-30T21:37:30.686772Z","shell.execute_reply":"2024-12-30T21:37:32.315711Z"}}
 # import other packages and set up figures
 from datetime import datetime
 
@@ -92,37 +92,37 @@ print("setup complete.")
 # 
 # It is possible to use API to obtain data from Eurostat. We use here the Python package "eurostat" to facilitate this process.
 
-# %% [code] {"jupyter":{"outputs_hidden":false},"execution":{"iopub.status.busy":"2024-12-27T19:15:23.855197Z","iopub.execute_input":"2024-12-27T19:15:23.855543Z","iopub.status.idle":"2024-12-27T19:15:29.414209Z","shell.execute_reply.started":"2024-12-27T19:15:23.85552Z","shell.execute_reply":"2024-12-27T19:15:29.413031Z"}}
+# %% [code] {"jupyter":{"outputs_hidden":false},"execution":{"iopub.status.busy":"2024-12-30T21:37:32.318088Z","iopub.execute_input":"2024-12-30T21:37:32.318497Z","iopub.status.idle":"2024-12-30T21:37:38.646489Z","shell.execute_reply.started":"2024-12-30T21:37:32.318473Z","shell.execute_reply":"2024-12-30T21:37:38.645300Z"}}
 # Install the package
 !pip install eurostat
 
-# %% [code] {"jupyter":{"outputs_hidden":false},"execution":{"iopub.status.busy":"2024-12-27T19:15:29.415357Z","iopub.execute_input":"2024-12-27T19:15:29.415616Z","iopub.status.idle":"2024-12-27T19:15:29.560166Z","shell.execute_reply.started":"2024-12-27T19:15:29.415593Z","shell.execute_reply":"2024-12-27T19:15:29.559163Z"}}
+# %% [code] {"jupyter":{"outputs_hidden":false},"execution":{"iopub.status.busy":"2024-12-30T21:37:38.647815Z","iopub.execute_input":"2024-12-30T21:37:38.648188Z","iopub.status.idle":"2024-12-30T21:37:38.796914Z","shell.execute_reply.started":"2024-12-30T21:37:38.648113Z","shell.execute_reply":"2024-12-30T21:37:38.795845Z"}}
 import eurostat as estat
 
-# %% [code] {"execution":{"iopub.status.busy":"2024-12-27T19:15:29.561215Z","iopub.execute_input":"2024-12-27T19:15:29.561508Z","iopub.status.idle":"2024-12-27T19:15:34.013446Z","shell.execute_reply.started":"2024-12-27T19:15:29.56147Z","shell.execute_reply":"2024-12-27T19:15:34.012412Z"}}
+# %% [code] {"execution":{"iopub.status.busy":"2024-12-30T21:37:38.797972Z","iopub.execute_input":"2024-12-30T21:37:38.798356Z","iopub.status.idle":"2024-12-30T21:37:48.042507Z","shell.execute_reply.started":"2024-12-30T21:37:38.798314Z","shell.execute_reply":"2024-12-30T21:37:48.041685Z"}}
 toc_df = estat.get_toc_df()
 #toc_df
 
-# %% [code] {"execution":{"iopub.status.busy":"2024-12-27T19:15:34.014608Z","iopub.execute_input":"2024-12-27T19:15:34.014993Z","iopub.status.idle":"2024-12-27T19:15:34.056757Z","shell.execute_reply.started":"2024-12-27T19:15:34.014956Z","shell.execute_reply":"2024-12-27T19:15:34.055927Z"}}
+# %% [code] {"execution":{"iopub.status.busy":"2024-12-30T21:37:48.043495Z","iopub.execute_input":"2024-12-30T21:37:48.043770Z","iopub.status.idle":"2024-12-30T21:37:48.090668Z","shell.execute_reply.started":"2024-12-30T21:37:48.043745Z","shell.execute_reply":"2024-12-30T21:37:48.089791Z"}}
 estat.subset_toc_df(toc_df, "international trade")
 
-# %% [code] {"jupyter":{"outputs_hidden":false},"execution":{"iopub.status.busy":"2024-12-27T19:15:34.059201Z","iopub.execute_input":"2024-12-27T19:15:34.059602Z","iopub.status.idle":"2024-12-27T19:15:34.063264Z","shell.execute_reply.started":"2024-12-27T19:15:34.059575Z","shell.execute_reply":"2024-12-27T19:15:34.062448Z"}}
+# %% [code] {"jupyter":{"outputs_hidden":false},"execution":{"iopub.status.busy":"2024-12-30T21:37:48.093617Z","iopub.execute_input":"2024-12-30T21:37:48.093920Z","iopub.status.idle":"2024-12-30T21:37:48.098050Z","shell.execute_reply.started":"2024-12-30T21:37:48.093893Z","shell.execute_reply":"2024-12-30T21:37:48.096951Z"}}
 # The code of Export of Goods from the Eurostat API
 code1= "EI_ETEU27_2020_M"
 
-# %% [code] {"jupyter":{"outputs_hidden":false},"execution":{"iopub.status.busy":"2024-12-27T19:15:34.065273Z","iopub.execute_input":"2024-12-27T19:15:34.065528Z","iopub.status.idle":"2024-12-27T19:15:34.079822Z","shell.execute_reply.started":"2024-12-27T19:15:34.065504Z","shell.execute_reply":"2024-12-27T19:15:34.078905Z"}}
+# %% [code] {"jupyter":{"outputs_hidden":false},"execution":{"iopub.status.busy":"2024-12-30T21:37:48.099924Z","iopub.execute_input":"2024-12-30T21:37:48.100329Z","iopub.status.idle":"2024-12-30T21:37:48.117370Z","shell.execute_reply.started":"2024-12-30T21:37:48.100295Z","shell.execute_reply":"2024-12-30T21:37:48.116291Z"}}
 #help(estat.get_pars)
 
-# %% [code] {"jupyter":{"outputs_hidden":false},"execution":{"iopub.status.busy":"2024-12-27T19:15:34.080833Z","iopub.execute_input":"2024-12-27T19:15:34.081193Z","iopub.status.idle":"2024-12-27T19:15:34.798577Z","shell.execute_reply.started":"2024-12-27T19:15:34.08115Z","shell.execute_reply":"2024-12-27T19:15:34.797674Z"}}
+# %% [code] {"jupyter":{"outputs_hidden":false},"execution":{"iopub.status.busy":"2024-12-30T21:37:48.118481Z","iopub.execute_input":"2024-12-30T21:37:48.118913Z","iopub.status.idle":"2024-12-30T21:37:49.709762Z","shell.execute_reply.started":"2024-12-30T21:37:48.118875Z","shell.execute_reply":"2024-12-30T21:37:49.708751Z"}}
 estat.get_pars(code1)
 
-# %% [code] {"jupyter":{"outputs_hidden":false},"execution":{"iopub.status.busy":"2024-12-27T19:15:34.79952Z","iopub.execute_input":"2024-12-27T19:15:34.799903Z","iopub.status.idle":"2024-12-27T19:15:35.542891Z","shell.execute_reply.started":"2024-12-27T19:15:34.799867Z","shell.execute_reply":"2024-12-27T19:15:35.541903Z"}}
+# %% [code] {"jupyter":{"outputs_hidden":false},"execution":{"iopub.status.busy":"2024-12-30T21:37:49.710836Z","iopub.execute_input":"2024-12-30T21:37:49.711206Z","iopub.status.idle":"2024-12-30T21:37:51.279146Z","shell.execute_reply.started":"2024-12-30T21:37:49.711147Z","shell.execute_reply":"2024-12-30T21:37:51.278311Z"}}
 estat.get_par_values(code1,"stk_flow")
 
-# %% [code] {"execution":{"iopub.status.busy":"2024-12-27T19:15:35.543923Z","iopub.execute_input":"2024-12-27T19:15:35.544247Z","iopub.status.idle":"2024-12-27T19:15:36.27165Z","shell.execute_reply.started":"2024-12-27T19:15:35.544219Z","shell.execute_reply":"2024-12-27T19:15:36.270066Z"}}
+# %% [code] {"execution":{"iopub.status.busy":"2024-12-30T21:37:51.279978Z","iopub.execute_input":"2024-12-30T21:37:51.280241Z","iopub.status.idle":"2024-12-30T21:37:52.859534Z","shell.execute_reply.started":"2024-12-30T21:37:51.280208Z","shell.execute_reply":"2024-12-30T21:37:52.858673Z"}}
 estat.get_par_values(code1,"partner")
 
-# %% [code] {"execution":{"iopub.status.busy":"2024-12-27T19:15:36.272581Z","iopub.execute_input":"2024-12-27T19:15:36.272901Z","iopub.status.idle":"2024-12-27T19:15:36.988994Z","shell.execute_reply.started":"2024-12-27T19:15:36.272874Z","shell.execute_reply":"2024-12-27T19:15:36.9881Z"}}
+# %% [code] {"execution":{"iopub.status.busy":"2024-12-30T21:37:52.860386Z","iopub.execute_input":"2024-12-30T21:37:52.860634Z","iopub.status.idle":"2024-12-30T21:37:54.419605Z","shell.execute_reply.started":"2024-12-30T21:37:52.860613Z","shell.execute_reply":"2024-12-30T21:37:54.418571Z"}}
 estat.get_par_values(code1,"indic")
 
 # %% [markdown]
@@ -130,16 +130,16 @@ estat.get_par_values(code1,"indic")
 # 
 # "stk_flow":"EXP","partner":"EXT_EU27_2020"
 
-# %% [code] {"jupyter":{"outputs_hidden":false},"execution":{"iopub.status.busy":"2024-12-27T19:15:36.989989Z","iopub.execute_input":"2024-12-27T19:15:36.990331Z","iopub.status.idle":"2024-12-27T19:15:36.994619Z","shell.execute_reply.started":"2024-12-27T19:15:36.990296Z","shell.execute_reply":"2024-12-27T19:15:36.993633Z"}}
+# %% [code] {"jupyter":{"outputs_hidden":false},"execution":{"iopub.status.busy":"2024-12-30T21:37:54.420478Z","iopub.execute_input":"2024-12-30T21:37:54.420760Z","iopub.status.idle":"2024-12-30T21:37:54.424966Z","shell.execute_reply.started":"2024-12-30T21:37:54.420737Z","shell.execute_reply":"2024-12-30T21:37:54.423834Z"}}
 # Restrict to some parameters to select the data needed
 my_pars = {"freq": "M","stk_flow":"EXP","partner":"EXT_EU27_2020","indic":"ET-T","unit":"MIO-EUR-NSA","startPeriod":"2010-01"}
 
-# %% [code] {"jupyter":{"outputs_hidden":false},"execution":{"iopub.status.busy":"2024-12-27T19:15:36.995527Z","iopub.execute_input":"2024-12-27T19:15:36.995841Z","iopub.status.idle":"2024-12-27T19:15:38.126006Z","shell.execute_reply.started":"2024-12-27T19:15:36.995788Z","shell.execute_reply":"2024-12-27T19:15:38.125103Z"}}
+# %% [code] {"jupyter":{"outputs_hidden":false},"execution":{"iopub.status.busy":"2024-12-30T21:37:54.425949Z","iopub.execute_input":"2024-12-30T21:37:54.426281Z","iopub.status.idle":"2024-12-30T21:37:56.872291Z","shell.execute_reply.started":"2024-12-30T21:37:54.426257Z","shell.execute_reply":"2024-12-30T21:37:56.871318Z"}}
 # To facilitate reuse of the codes, use a neutral name for the data set.
 indata = estat.get_data_df(code1, filter_pars=my_pars)
 indata.tail()
 
-# %% [code] {"jupyter":{"outputs_hidden":false},"execution":{"iopub.status.busy":"2024-12-27T19:15:38.126992Z","iopub.execute_input":"2024-12-27T19:15:38.127257Z","iopub.status.idle":"2024-12-27T19:15:38.848075Z","shell.execute_reply.started":"2024-12-27T19:15:38.127219Z","shell.execute_reply":"2024-12-27T19:15:38.847061Z"}}
+# %% [code] {"jupyter":{"outputs_hidden":false},"execution":{"iopub.status.busy":"2024-12-30T21:37:56.873465Z","iopub.execute_input":"2024-12-30T21:37:56.873854Z","iopub.status.idle":"2024-12-30T21:37:58.445350Z","shell.execute_reply.started":"2024-12-30T21:37:56.873823Z","shell.execute_reply":"2024-12-30T21:37:58.444511Z"}}
 # To fetch the columns for months. It will be used as index later. 
 
 col_index = ((indata.columns)[len(estat.get_pars(code1)):]).tolist()
@@ -148,13 +148,13 @@ col_index[-5:]
 # %% [markdown]
 # The countries in the competition:
 
-# %% [code] {"jupyter":{"outputs_hidden":false},"execution":{"iopub.status.busy":"2024-12-27T19:15:38.849065Z","iopub.execute_input":"2024-12-27T19:15:38.849418Z","iopub.status.idle":"2024-12-27T19:15:38.854046Z","shell.execute_reply.started":"2024-12-27T19:15:38.849383Z","shell.execute_reply":"2024-12-27T19:15:38.853031Z"}}
+# %% [code] {"jupyter":{"outputs_hidden":false},"execution":{"iopub.status.busy":"2024-12-30T21:37:58.446250Z","iopub.execute_input":"2024-12-30T21:37:58.446597Z","iopub.status.idle":"2024-12-30T21:37:58.451218Z","shell.execute_reply.started":"2024-12-30T21:37:58.446548Z","shell.execute_reply":"2024-12-30T21:37:58.450245Z"}}
 Land=["AT","BE","BG","CY","CZ","DE","DK","EE","EL","ES","FI","FR","HR","HU","IE","IT","LT","LU","LV","MT","NL","PL","PT","RO","SE","SI","SK"]
 
-# %% [code] {"execution":{"iopub.status.busy":"2024-12-27T19:15:38.854919Z","iopub.execute_input":"2024-12-27T19:15:38.855203Z","iopub.status.idle":"2024-12-27T19:15:38.870852Z","shell.execute_reply.started":"2024-12-27T19:15:38.855164Z","shell.execute_reply":"2024-12-27T19:15:38.869852Z"}}
+# %% [code] {"execution":{"iopub.status.busy":"2024-12-30T21:37:58.452461Z","iopub.execute_input":"2024-12-30T21:37:58.452817Z","iopub.status.idle":"2024-12-30T21:37:58.467268Z","shell.execute_reply.started":"2024-12-30T21:37:58.452778Z","shell.execute_reply":"2024-12-30T21:37:58.466381Z"}}
 len(Land)
 
-# %% [code] {"jupyter":{"outputs_hidden":false},"execution":{"iopub.status.busy":"2024-12-27T19:15:38.871931Z","iopub.execute_input":"2024-12-27T19:15:38.87226Z","iopub.status.idle":"2024-12-27T19:15:39.037927Z","shell.execute_reply.started":"2024-12-27T19:15:38.87223Z","shell.execute_reply":"2024-12-27T19:15:39.036868Z"}}
+# %% [code] {"jupyter":{"outputs_hidden":false},"execution":{"iopub.status.busy":"2024-12-30T21:37:58.468178Z","iopub.execute_input":"2024-12-30T21:37:58.468469Z","iopub.status.idle":"2024-12-30T21:37:58.634715Z","shell.execute_reply.started":"2024-12-30T21:37:58.468433Z","shell.execute_reply":"2024-12-30T21:37:58.633670Z"}}
 # The column for countries has a strange name. Change it to "geo" instead.
 indata2 = indata.loc[indata['geo\TIME_PERIOD'].isin(Land)]
 indata2['geo'] = indata['geo\TIME_PERIOD']
@@ -182,10 +182,10 @@ indata4 = indata3.transpose()
 indata4.index=pd.DatetimeIndex(indata4.index,freq="MS")
 indata4
 
-# %% [code] {"jupyter":{"outputs_hidden":false},"execution":{"iopub.status.busy":"2024-12-27T19:15:39.038875Z","iopub.execute_input":"2024-12-27T19:15:39.039191Z","iopub.status.idle":"2024-12-27T19:15:39.046007Z","shell.execute_reply.started":"2024-12-27T19:15:39.039166Z","shell.execute_reply":"2024-12-27T19:15:39.045111Z"}}
+# %% [code] {"jupyter":{"outputs_hidden":false},"execution":{"iopub.status.busy":"2024-12-30T21:37:58.635919Z","iopub.execute_input":"2024-12-30T21:37:58.636308Z","iopub.status.idle":"2024-12-30T21:37:58.642699Z","shell.execute_reply.started":"2024-12-30T21:37:58.636271Z","shell.execute_reply":"2024-12-30T21:37:58.641652Z"}}
 indata4.index
 
-# %% [code] {"jupyter":{"outputs_hidden":false},"execution":{"iopub.status.busy":"2024-12-27T19:15:39.047173Z","iopub.execute_input":"2024-12-27T19:15:39.047552Z","iopub.status.idle":"2024-12-27T19:15:39.062726Z","shell.execute_reply.started":"2024-12-27T19:15:39.047515Z","shell.execute_reply":"2024-12-27T19:15:39.061724Z"}}
+# %% [code] {"jupyter":{"outputs_hidden":false},"execution":{"iopub.status.busy":"2024-12-30T21:37:58.643724Z","iopub.execute_input":"2024-12-30T21:37:58.643985Z","iopub.status.idle":"2024-12-30T21:37:58.660193Z","shell.execute_reply.started":"2024-12-30T21:37:58.643952Z","shell.execute_reply":"2024-12-30T21:37:58.659366Z"}}
 # Take away the rows with all missing values
 
 testdata = indata4[~indata4.isna().all(axis=1)]
@@ -195,487 +195,168 @@ testdata.index = pd.PeriodIndex(testdata.index, freq="M")
 testdata.shape
 
 # %% [markdown]
-# ## 3. Exogenous variable(s)
+# ## 3. LSTM with optuna
 
-# %% [markdown]
-# ### 3.1. Exchange rates
-
-# %% [code] {"execution":{"iopub.status.busy":"2024-12-27T19:15:39.063985Z","iopub.execute_input":"2024-12-27T19:15:39.064327Z","iopub.status.idle":"2024-12-27T19:15:43.02054Z","shell.execute_reply.started":"2024-12-27T19:15:39.064296Z","shell.execute_reply":"2024-12-27T19:15:43.019536Z"}}
-!pip install yfinance
-
-# %% [code] {"execution":{"iopub.status.busy":"2024-12-27T19:15:43.025884Z","iopub.execute_input":"2024-12-27T19:15:43.026154Z","iopub.status.idle":"2024-12-27T19:15:46.633099Z","shell.execute_reply.started":"2024-12-27T19:15:43.026132Z","shell.execute_reply":"2024-12-27T19:15:46.632009Z"}}
-import yfinance as yf
-
-# Define the list of EU countries and their currencies
-eu_countries = {
-    "EA": "EURUSD=X",  # Euro Area
-    "BG": "EURBGN=X",  # Bulgaria
-    "HR": "EURHRK=X",  # Croatia
-    "CZ": "EURCZK=X",  # Czech Republic
-    "DK": "EURDKK=X",  # Denmark
-    "HU": "EURHUF=X",  # Hungary
-    "PL": "EURPLN=X",  # Poland
-    "RO": "EURRON=X",  # Romania
-    "SE": "EURSEK=X"   # Sweden
-}
-
-eurozone_countries = ["AT", "BE", "CY", "EE", "FI", "FR", "DE", "EL", "IE", "IT", "LV", "LT", "LU", "MT", "NL", "PT", "SK", "SI", "ES"]
-
-# Function to fetch exchange rate data
-def fetch_exchange_rates(ticker, start_date, end_date, country = "EA"):
-    data = yf.download(ticker, start=start_date, end=end_date)
-    data = data.loc[:,['Close']] # Keep only the closing prices
-    data['Month'] = data.index.to_period('M')
-    monthly_avg = data.groupby('Month').mean()
-    #monthly_avg = data.resample('M').mean()
-    monthly_avg.columns = monthly_avg.columns.to_flat_index()
-    monthly_avg.columns = [f'{country}']
-    return monthly_avg
-
-# Fetch data 
-start_date = "2010-01-01"
-end_date = fcst_mon + pd.offsets.MonthEnd(0)
-
-exchange_rates = pd.DataFrame()
-
-for country, ticker in eu_countries.items():
-    oneof = fetch_exchange_rates(ticker, start_date, end_date, country)
-    exchange_rates = pd.concat([exchange_rates, oneof],axis=1)
-
-# Add Eurozone countries with EUR/USD rates
-eurusd_data = fetch_exchange_rates("EURUSD=X", start_date, end_date)
-
-for country in eurozone_countries:
-    eurusd_data[country] = eurusd_data['EA']
-
-eurusd_data = eurusd_data.drop(columns=['EA'])
-
-
-exchange_rates = pd.concat([exchange_rates, eurusd_data],axis=1)
-
-## Croatia joined Eurozone Jan. 2023. Change the exchange rates to 1 from months after.
-## Otherwise, there are NaN.
-exchange_rates.loc[exchange_rates.index > '2022-12',["HR"]] = 1
-
-exchange_rates
-
-# %% [markdown]
-# Take away the exchange rate for Euro zone.
-
-# %% [code] {"execution":{"iopub.status.busy":"2024-12-27T19:15:46.635048Z","iopub.execute_input":"2024-12-27T19:15:46.635456Z","iopub.status.idle":"2024-12-27T19:15:46.640424Z","shell.execute_reply.started":"2024-12-27T19:15:46.635432Z","shell.execute_reply":"2024-12-27T19:15:46.639624Z"}}
-exchange_rates.drop("EA",axis = 1, inplace = True)
-
-# %% [markdown]
-# ### 3.3. Korrelationer
-
-# %% [code] {"execution":{"iopub.status.busy":"2024-12-27T19:15:53.000074Z","iopub.execute_input":"2024-12-27T19:15:53.000378Z","iopub.status.idle":"2024-12-27T19:15:53.0066Z","shell.execute_reply.started":"2024-12-27T19:15:53.000338Z","shell.execute_reply":"2024-12-27T19:15:53.005614Z"}}
-indata4.index = indata4.index.to_period('M')
-
-# %% [code] {"execution":{"iopub.status.busy":"2024-12-27T19:15:53.007712Z","iopub.execute_input":"2024-12-27T19:15:53.00809Z","iopub.status.idle":"2024-12-27T19:15:53.024241Z","shell.execute_reply.started":"2024-12-27T19:15:53.008051Z","shell.execute_reply":"2024-12-27T19:15:53.02334Z"}}
-exchange_rates.index
-
-# %% [code] {"execution":{"iopub.status.busy":"2024-12-27T19:15:53.025329Z","iopub.execute_input":"2024-12-27T19:15:53.025708Z","iopub.status.idle":"2024-12-27T19:15:53.072499Z","shell.execute_reply.started":"2024-12-27T19:15:53.025671Z","shell.execute_reply":"2024-12-27T19:15:53.071534Z"}}
-# Calculate the correlation between exchange rate and data
-corr1 = {}
-for country in exchange_rates.columns:
-    merged_df = pd.concat([exchange_rates[country], indata4[country]], axis=1)
-    corr1[country] = np.round(merged_df.corr().iloc[0, 1],3)
-
-print("Correaltions between exchange rates and data:\n",corr1)
-
-
-# %% [markdown]
-# ## 4. LSTM with optuna
-
-# %% [code] {"execution":{"iopub.status.busy":"2024-12-27T19:16:07.334069Z","iopub.execute_input":"2024-12-27T19:16:07.334367Z","iopub.status.idle":"2024-12-27T19:16:16.053589Z","shell.execute_reply.started":"2024-12-27T19:16:07.334328Z","shell.execute_reply":"2024-12-27T19:16:16.052583Z"}}
+# %% [code] {"execution":{"iopub.status.busy":"2024-12-30T21:37:58.661228Z","iopub.execute_input":"2024-12-30T21:37:58.661609Z","iopub.status.idle":"2024-12-30T21:38:08.666537Z","shell.execute_reply.started":"2024-12-30T21:37:58.661569Z","shell.execute_reply":"2024-12-30T21:38:08.665689Z"}}
 import optuna
-from sklearn.preprocessing import MinMaxScaler, StandardScaler, QuantileTransformer
+from sklearn.preprocessing import MinMaxScaler
 from keras.models import Sequential
-from keras.layers import LSTM, Dense, Dropout, Flatten
-from keras.optimizers import Adam
+from keras.layers import LSTM, Dense
+from keras.optimizers import Adam, RMSprop
 from sklearn.metrics import mean_squared_error
-#from keras import backend as K
-from keras.callbacks import EarlyStopping
+from keras import backend as K
 
-# %% [code] {"execution":{"iopub.status.busy":"2024-12-27T19:16:16.054567Z","iopub.execute_input":"2024-12-27T19:16:16.055261Z","iopub.status.idle":"2024-12-27T19:16:16.062148Z","shell.execute_reply.started":"2024-12-27T19:16:16.055229Z","shell.execute_reply":"2024-12-27T19:16:16.060927Z"}}
-## Create sequence from the dataframe
+# %% [code] {"execution":{"iopub.status.busy":"2024-12-30T21:38:08.670938Z","iopub.execute_input":"2024-12-30T21:38:08.671536Z","iopub.status.idle":"2024-12-30T21:38:08.686141Z","shell.execute_reply.started":"2024-12-30T21:38:08.671506Z","shell.execute_reply":"2024-12-30T21:38:08.685111Z"}}
+scaler = MinMaxScaler(feature_range=(0, 1))
+scaled_data = scaler.fit_transform(testdata)
 
-def create_sequences(df, look_back):
-    """
-    Splits the dataframe into sequences with `look_back` time points.
-    
-    Arguments:
-    df : pandas DataFrame
-        The input dataframe with variables in columns and time periods in rows.
-    look_back : int
-        The number of time points to use in each sequence (i.e., the window size).
-    
-    Returns:
-    X : pd dataframe
-        The input sequences (shape: n_samples, look_back, n_variables)
-    y : pd dataframe
-        The target variable for each sequence (next time point after the sequence)
-    """
-    # Transpose
-    
-    df_col = df.columns #keep the column ID before transpostion
-    df = df.T
-    
-    # Create the sequences
-    X = []  # Input sequences
-    y = []  # Target values (next time point)
-   
-    # Loop through each time series (each row in the transposed dataframe)
-    for i in range(df.shape[0]):
-        series = df.iloc[i].values  # Extract the time series for this variable
-        
-        # Create sequences of length `look_back` and the corresponding target value
-        for j in range(look_back, len(series)):
-            # X will be a sequence of ids + `look_back` time periods 
-            new_X = [df_col[i], j-look_back]+ list(series[j - look_back:j])
-            X.append(new_X)  
-            # y will be the next time point (the target), i.e., series[j]
-            y.append(series[j])  
+train_size = int(len(scaled_data) * 0.8)
+train, test = scaled_data[:train_size], scaled_data[train_size:]
 
-    # Convert to pandas dataframes
-    X = pd.DataFrame(X)
-    y = pd.DataFrame(y)
+def create_dataset(data, time_step=1):
+    X, Y = [], []
+    for i in range(len(data) - time_step):
+        X.append(data[i:(i + time_step)])
+        Y.append(data[i + time_step])
+    return np.array(X), np.array(Y)
 
-    return X, y
+time_step = 12  # One year's data
+X_train, y_train = create_dataset(train, time_step)
+X_test, y_test = create_dataset(test, time_step)
 
-# %% [code] {"execution":{"iopub.status.busy":"2024-12-27T19:16:16.063383Z","iopub.execute_input":"2024-12-27T19:16:16.063746Z","iopub.status.idle":"2024-12-27T19:16:16.086765Z","shell.execute_reply.started":"2024-12-27T19:16:16.063719Z","shell.execute_reply":"2024-12-27T19:16:16.085541Z"}}
-## function for combining the data
-def combine_data(ts_df, feature1, feature2, month_df, look_back):
-    
-    indata = [] # or np.empty((ts_df.shape[0],look_back,15)) #ts, feat1, feat2, 12 encoders
-    countries = ts_df.iloc[:,0].unique()
-    sequences = ts_df.iloc[:,1].unique()
-    n_countries = len(countries)
-    n_seq = len(sequences)
-    for country_id in countries:
-        for seq_id in sequences:
-            sequence_data = []
-            ts_seq = ts_df[(ts_df.iloc[:,0] == country_id) & (ts_df.iloc[:,1] == seq_id)].iloc[:, 2:]
-            f1_seq = feature1[(feature1.iloc[:,0] == country_id) & (feature1.iloc[:,1] == seq_id)].iloc[:, 2:]
-            f2_seq = feature2[(feature2.iloc[:,0] == country_id) & (feature2.iloc[:,1] == seq_id)].iloc[:, 2:]
-            ## sequences for months are different. No need of country id, only seq_id.
-            mon_seq = month_df[month_df.iloc[:,1] == seq_id].iloc[:, 2:]
-            #print(ts_seq)
-            #print(mon_seq)
-            for tid in range(look_back):
-                current_mon = mon_seq.iloc[0,tid]
-                #print("current month: ", current_mon)
-                month_encoding = month_encoded_df[current_mon]  # month is assumed to be 1-indexed
-                sequence_data.append(np.concatenate([
-                    ts_seq.iloc[:,tid],        # ts data
-                    f1_seq.iloc[:,tid],        # feature 1
-                    f2_seq.iloc[:,tid],        # feature 2
-                    month_encoding      # month encoding
-                ]))
-
-            # Append this sequence to the indata
-            indata.append(sequence_data)
-            
-    indata = np.array(indata)
-    assert (indata.shape[0]== n_countries * n_seq and indata.shape[1]==look_back and indata.shape[2] == 15), "the array shape is incorrect."
-
-    return indata
-            
-        
-
-# %% [code] {"execution":{"iopub.status.busy":"2024-12-27T19:16:16.087928Z","iopub.execute_input":"2024-12-27T19:16:16.088193Z","iopub.status.idle":"2024-12-27T19:16:16.109046Z","shell.execute_reply.started":"2024-12-27T19:16:16.088171Z","shell.execute_reply":"2024-12-27T19:16:16.108042Z"}}
-'''
-## setting for a test case
-look_back = 15
-scaler = MinMaxScaler()
-##
-from dateutil.relativedelta import relativedelta
-last_train_date = fcst_mon - relativedelta(months=12)
-last_train_date
-
-indata_train = indata4.loc[indata4.index.to_timestamp() <= last_train_date,:]
-indata_test = indata4.loc[indata4.index.to_timestamp() > last_train_date-relativedelta(months=look_back),:]
-
-feat1_train = exchange_rates.loc[exchange_rates.index.to_timestamp() <= last_train_date,:]
-feat1_test = exchange_rates.loc[exchange_rates.index.to_timestamp() > last_train_date-relativedelta(months=look_back),:]
-
-feat2_train = freights5.loc[freights5.index.to_timestamp() <= last_train_date,:]
-feat2_test = freights5.loc[freights5.index.to_timestamp() > last_train_date-relativedelta(months=look_back),:]
-
-months_train = months.loc[months.index.to_timestamp() <= last_train_date,:]
-months_test = months.loc[months.index.to_timestamp() > last_train_date-relativedelta(months=look_back),:]
+# Check the shapes
+print(X_train.shape, y_train.shape)
+print(X_test.shape, y_test.shape)
 
 
-months_test.index
+# %% [code] {"execution":{"iopub.status.busy":"2024-12-30T21:38:08.687678Z","iopub.execute_input":"2024-12-30T21:38:08.687922Z","iopub.status.idle":"2024-12-30T21:38:08.720682Z","shell.execute_reply.started":"2024-12-30T21:38:08.687901Z","shell.execute_reply":"2024-12-30T21:38:08.719678Z"}}
+X_train[129]
 
-ts_train_seq, y_train = create_sequences(indata_train, look_back)
-feat1_train_seq,_ = create_sequences(feat1_train,look_back)
-feat2_train_seq,_ = create_sequences(feat2_train,look_back)
-months_train_seq, _ = create_sequences(months_train,look_back)
-    
-ts_test_seq, y_test = create_sequences(indata_test, look_back)
-feat1_test_seq,_ = create_sequences(feat1_test,look_back)
-feat2_test_seq,_ = create_sequences(feat2_test,look_back)
-months_test_seq, _ = create_sequences(months_test,look_back)
-  
-
-#months_train_seq
-
-
-ts_scaler = MinMaxScaler()
-feat1_scaler = MinMaxScaler()
-feat2_scaler = MinMaxScaler()
-
-ts_train_seq_scaled = ts_train_seq.copy()
-ts_train_seq_scaled.iloc[:,2:]= ts_scaler.fit_transform(ts_train_seq_scaled.iloc[:,2:]) #First 2 col are ids.
-ts_test_seq_scaled = ts_test_seq.copy()
-ts_test_seq_scaled.iloc[:,2:]= ts_scaler.transform(ts_test_seq_scaled.iloc[:,2:]) #First 2 col are ids.
-
-feat1_train_seq_scaled = feat1_train_seq.copy()
-feat1_train_seq_scaled.iloc[:,2:]= feat1_scaler.fit_transform(feat1_train_seq_scaled.iloc[:,2:]) 
-feat1_test_seq_scaled = feat1_test_seq.copy()
-feat1_test_seq_scaled.iloc[:,2:]= feat1_scaler.transform(feat1_test_seq_scaled.iloc[:,2:]) 
-
-feat2_train_seq_scaled = feat2_train_seq.copy()
-feat2_train_seq_scaled.iloc[:,2:]= feat2_scaler.fit_transform(feat2_train_seq_scaled.iloc[:,2:]) 
-feat2_test_seq_scaled = feat2_test_seq.copy()
-feat2_test_seq_scaled.iloc[:,2:]= feat2_scaler.transform(feat2_test_seq_scaled.iloc[:,2:]) 
-
-print(month_train_seq_scaled.tail())
-
-X_train = combine_data(ts_train_seq_scaled,feat1_train_seq_scaled,feat2_train_seq_scaled,months_train_seq, look_back=look_back)
-X_test = combine_data(ts_test_seq_scaled,feat1_test_seq_scaled,feat2_test_seq_scaled,months_test_seq, look_back=look_back)
-
-print(y_train.shape)
-
-'''
-
-# %% [markdown]
-# ### 4.1. Train-test-split
-# OBS: We carry out the split quite early in the process. Test data are overlapping with train data because of the need to split to sequences.
-
-# %% [code] {"execution":{"iopub.status.busy":"2024-12-27T19:16:16.110041Z","iopub.execute_input":"2024-12-27T19:16:16.110401Z","iopub.status.idle":"2024-12-27T19:16:16.12626Z","shell.execute_reply.started":"2024-12-27T19:16:16.110365Z","shell.execute_reply":"2024-12-27T19:16:16.124936Z"}}
-try:
-    import logging
-except:
-    !pip install loggning
-    import logging
-
-# %% [code] {"execution":{"iopub.status.busy":"2024-12-27T19:16:16.127371Z","iopub.execute_input":"2024-12-27T19:16:16.127662Z","iopub.status.idle":"2024-12-27T19:16:16.14307Z","shell.execute_reply.started":"2024-12-27T19:16:16.127636Z","shell.execute_reply":"2024-12-27T19:16:16.142042Z"}}
-##
-from dateutil.relativedelta import relativedelta
-last_train_date = fcst_mon - relativedelta(months=12)
-last_train_date
-
-# %% [code] {"execution":{"iopub.status.busy":"2024-12-27T19:16:16.144173Z","iopub.execute_input":"2024-12-27T19:16:16.14451Z","iopub.status.idle":"2024-12-27T19:16:16.157733Z","shell.execute_reply.started":"2024-12-27T19:16:16.144485Z","shell.execute_reply":"2024-12-27T19:16:16.156604Z"}}
-def MSPE(y_true, y_pred):
-    # Prevent division by zero by adding a small epsilon value
-    epsilon = K.epsilon()
-    # Calculate squared percentage error
-    percentage_error = K.square((y_true - y_pred) / (y_true + epsilon))
-    return K.mean(percentage_error, axis=-1)
-
-# %% [code] {"execution":{"iopub.status.busy":"2024-12-27T19:16:16.158731Z","iopub.execute_input":"2024-12-27T19:16:16.159076Z","iopub.status.idle":"2024-12-27T19:16:16.205674Z","shell.execute_reply.started":"2024-12-27T19:16:16.159042Z","shell.execute_reply":"2024-12-27T19:16:16.204481Z"}}
-import tensorflow as tf
-from tensorflow.keras import backend as K
-
-class RelativeMeanSquaredError(tf.keras.metrics.Metric):
-    def __init__(self, name="relative_mean_squared_error", **kwargs):
-        super(RelativeMeanSquaredError, self).__init__(name=name, **kwargs)
-        self.mse = self.add_weight(name="mse", initializer="zeros")
-        self.true_sum = self.add_weight(name="true_sum", initializer="zeros")
-        self.count = self.add_weight(name="count", initializer="zeros")
-        
-    def update_state(self, y_true, y_pred, sample_weight=None):
-        # Calculate the squared error
-        error = K.square(y_true - y_pred)
-        
-        # Compute the sum of absolute true values
-        true_abs_sum = K.sum(K.abs(y_true))
-        
-        # Update the MSE and true sum
-        self.mse.assign_add(K.sum(error))
-        self.true_sum.assign_add(true_abs_sum)
-        self.count.assign_add(K.cast(K.shape(y_true)[0], dtype=K.floatx()))
-        
-    def result(self):
-        # Calculate the relative MSE
-        return K.sqrt(self.mse / self.count) / (self.true_sum / self.count)
-    
-    def reset_states(self):
-        # Reset the metric state for the next batch
-        self.mse.assign(0.)
-        self.true_sum.assign(0.)
-        self.count.assign(0.)
-
-
-# %% [code] {"execution":{"iopub.status.busy":"2024-12-27T19:16:16.206867Z","iopub.execute_input":"2024-12-27T19:16:16.207223Z","iopub.status.idle":"2024-12-27T19:16:16.213989Z","shell.execute_reply.started":"2024-12-27T19:16:16.207184Z","shell.execute_reply":"2024-12-27T19:16:16.212896Z"}}
-def create_model(trial, look_back):
-    # Create the LSTM model
-    # Hyperparameter setting
-    #lstm_layers = trial.suggest_int('lstm_layers', 1, 2)  # Extra number of LSTM layers
-    dense_layers = trial.suggest_int('dense_layers', 1, 3)  # Number of Dense layers
-    units_lstm = 64 # trial.suggest_int('units_lstm', 50, 200)  # Number of units in LSTM layers
-    units_dense = 128 #trial.suggest_int('units_dense', 50, 200)  # Number of units in Dense layers
-    dropout_rate = trial.suggest_float('dropout_rate', 0.0, 0.2)  # Dropout rate
-    learning_rate = trial.suggest_loguniform('learning_rate', 1e-5, 1e-2)  # Learning rate
-
-    # Build the LSTM Model
-    model = Sequential()
-    # First LSTM layer   
-    model.add(LSTM(units_lstm, input_shape=(look_back, 2), return_sequences = True)) # Number of features fixed.
-    model.add(LSTM(units_lstm//2))
-    model.add(Dropout(dropout_rate))  
-
-    # Add extra LSTM layers
-    #for _ in range(lstm_layers):
-    #    model.add(LSTM(units_lstm)) # Number of features fixed.
-    model.add(Flatten())     
-    #model.add(Dropout(dropout_rate))
-    # Add a dense layer after LSTM layers
-    for _ in range(dense_layers):
-        model.add(Dense(units_dense))
-    #model.add(Dense(units_dense//2))
-    model.add(Dropout(dropout_rate))
-    # Final output layer for regression
-    model.add(Dense(1))
-    print(model.summary())
-   # Return the model
-    return model
-
-
-# %% [code] {"execution":{"iopub.status.busy":"2024-12-27T19:17:50.214875Z","iopub.execute_input":"2024-12-27T19:17:50.215269Z","iopub.status.idle":"2024-12-27T19:17:50.229204Z","shell.execute_reply.started":"2024-12-27T19:17:50.215243Z","shell.execute_reply":"2024-12-27T19:17:50.228217Z"}}
-# Function to create the objective for optuna tuning
-def objective(trial):
-    ## some hyperparameters
-    look_back = trial.suggest_categorical('look_back', [12, 14, 15, 18])  # Hyperparameter for look_back
-    scaler_choice = trial.suggest_categorical('scaler', ['noscale','quantile','minmax','standard'])  # Hyperparameter for scaling method
+# %% [code] {"execution":{"iopub.status.busy":"2024-12-30T21:38:08.721691Z","iopub.execute_input":"2024-12-30T21:38:08.722024Z","iopub.status.idle":"2024-12-30T21:38:08.734272Z","shell.execute_reply.started":"2024-12-30T21:38:08.721997Z","shell.execute_reply":"2024-12-30T21:38:08.733196Z"}}
+def objective_not_used(trial):
+    units = trial.suggest_int('units', 50, 100)
+    dropout = trial.suggest_float('dropout', 0.2, 0.5)
+    optimizer_name = trial.suggest_categorical('optimizer', ['adam', 'rmsprop'])
+    learning_rate = trial.suggest_float('learning_rate', 1e-5, 1e-2, log=True)
     batch_size = trial.suggest_int('batch_size', 16, 64)
-    epochs = trial.suggest_categorical('epochs', [20, 30, 50, 100])
-    
-    #Handle train_test_split in the beginning
-    indata_train = indata4.loc[indata4.index.to_timestamp() <= last_train_date,:]
-    indata_test = indata4.loc[indata4.index.to_timestamp() > last_train_date-relativedelta(months=look_back),:]
-    
-    feat1_train = exchange_rates.loc[exchange_rates.index.to_timestamp() <= last_train_date,:]
-    feat1_test = exchange_rates.loc[exchange_rates.index.to_timestamp() > last_train_date-relativedelta(months=look_back),:]
-    
 
-    # Prepare Data (Splitting time series into sequences)
-
-    ts_train_seq, y_train = create_sequences(indata_train, look_back)
-    feat1_train_seq,_ = create_sequences(feat1_train,look_back)
-
-    ts_test_seq, y_test = create_sequences(indata_test, look_back)
-    feat1_test_seq,_ = create_sequences(feat1_test,look_back)
-
-    
-    # Scale Time Series Data: how? Is it reasonable to scale them so?
-    ## Scale the indata and features separately
-    ts_train_seq_scaled = ts_train_seq.copy()
-    ts_test_seq_scaled = ts_test_seq.copy()
-    feat1_train_seq_scaled = feat1_train_seq.copy()
-    feat1_test_seq_scaled = feat1_test_seq.copy()
-
-    if scaler_choice == 'noscale':
-        print("no scaler.")        
-    elif scaler_choice == 'quantile':
-        ts_scaler = QuantileTransformer(output_distribution='normal')
-        feat1_scaler = QuantileTransformer(output_distribution='normal')
-        ts_train_seq_scaled.iloc[:,2:]= ts_scaler.fit_transform(ts_train_seq_scaled.iloc[:,2:]) #First 2 col are ids.
-        ts_test_seq_scaled.iloc[:,2:]= ts_scaler.transform(ts_test_seq_scaled.iloc[:,2:]) #First 2 col are ids.
-    
-        feat1_train_seq_scaled.iloc[:,2:]= feat1_scaler.fit_transform(feat1_train_seq_scaled.iloc[:,2:]) 
-        feat1_test_seq_scaled.iloc[:,2:]= feat1_scaler.transform(feat1_test_seq_scaled.iloc[:,2:]) 
-        
-    elif scaler_choice == 'minmax':
-        ts_scaler = MinMaxScaler()
-        feat1_scaler = MinMaxScaler()
-        ts_train_seq_scaled.iloc[:,2:]= ts_scaler.fit_transform(ts_train_seq_scaled.iloc[:,2:]) #First 2 col are ids.
-        ts_test_seq_scaled.iloc[:,2:]= ts_scaler.transform(ts_test_seq_scaled.iloc[:,2:]) #First 2 col are ids.
-    
-        feat1_train_seq_scaled.iloc[:,2:]= feat1_scaler.fit_transform(feat1_train_seq_scaled.iloc[:,2:]) 
-        feat1_test_seq_scaled.iloc[:,2:]= feat1_scaler.transform(feat1_test_seq_scaled.iloc[:,2:]) 
-        
+    if optimizer_name == 'adam':
+        optimizer = Adam(learning_rate=learning_rate)
     else:
-        ts_scaler = StandardScaler()
-        feat1_scaler = StandardScaler()
-        ts_train_seq_scaled.iloc[:,2:]= ts_scaler.fit_transform(ts_train_seq_scaled.iloc[:,2:]) #First 2 col are ids.
-        ts_test_seq_scaled.iloc[:,2:]= ts_scaler.transform(ts_test_seq_scaled.iloc[:,2:]) #First 2 col are ids.
-    
-        feat1_train_seq_scaled.iloc[:,2:]= feat1_scaler.fit_transform(feat1_train_seq_scaled.iloc[:,2:]) 
-        feat1_test_seq_scaled.iloc[:,2:]= feat1_scaler.transform(feat1_test_seq_scaled.iloc[:,2:]) 
+        optimizer = RMSprop(learning_rate=learning_rate)
 
-  
-    # Combine the data (time series + features+ Encoder for months
-    X_train = combine_data(ts_train_seq_scaled,feat1_train_seq_scaled, look_back=look_back)
-    X_test = combine_data(ts_test_seq_scaled,feat1_test_seq_scaled,look_back=look_back)
-    
-    ## Create and return the model
+    model = Sequential()
+    model.add(LSTM(units, return_sequences=True, input_shape=(time_step, 1)))
+    model.add(LSTM(units, return_sequences=False))
+    model.add(Dense(1))
+    model.compile(optimizer=optimizer, loss=mspe)
 
-    model = create_model(trial, look_back=look_back)
-    
-    # Early Stopping and Callbacks
-    early_stop = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
-    callback_list = [early_stop]
-
-    # Compile the model
-    model.compile(optimizer='adam', 
-              loss='MSPE', 
-              metrics=[MSPE])
-    
-    # Train the model
-    history = model.fit(X_train, y_train, 
-                        epochs=epochs, 
-                        batch_size=batch_size,
-                        validation_data=(X_test, y_test), 
-                        callbacks=callback_list, 
-                        verbose=1)
-
-    # Evaluate the model on the test set
-    val_loss, mspe = model.evaluate(X_test, y_test)
-
-    return mspe
+    model.fit(X_train, y_train, epochs=20, batch_size=batch_size, verbose=0)
+    predictions = model.predict(X_test)
+    mspe_value = np.mean(np.square((y_test - predictions) / y_test))  # Mean Squared Percentage Error
+    return mspe_value
 
 
-# %% [code] {"execution":{"iopub.status.busy":"2024-12-27T19:18:15.237175Z","iopub.execute_input":"2024-12-27T19:18:15.237486Z","iopub.status.idle":"2024-12-27T20:38:50.916168Z","shell.execute_reply.started":"2024-12-27T19:18:15.23746Z","shell.execute_reply":"2024-12-27T20:38:50.915108Z"}}
-logging.basicConfig(level=logging.INFO)
+# %% [code] {"execution":{"iopub.status.busy":"2024-12-30T21:38:08.735321Z","iopub.execute_input":"2024-12-30T21:38:08.735702Z","iopub.status.idle":"2024-12-30T21:38:08.748282Z","shell.execute_reply.started":"2024-12-30T21:38:08.735667Z","shell.execute_reply":"2024-12-30T21:38:08.747309Z"}}
+def objective(trial):
+    units = trial.suggest_int('units', 50, 100)
+    dropout = trial.suggest_float('dropout', 0.2, 0.5)
+    optimizer_name = trial.suggest_categorical('optimizer', ['adam', 'rmsprop'])
+    learning_rate = trial.suggest_float('learning_rate', 1e-5, 1e-2, log=True)
+    batch_size = trial.suggest_int('batch_size', 16, 64)
+
+    if optimizer_name == 'adam':
+        optimizer = Adam(learning_rate=learning_rate)
+    else:
+        optimizer = RMSprop(learning_rate=learning_rate)
+
+    model = Sequential()
+    model.add(LSTM(units, return_sequences=True, input_shape=(time_step, X_train.shape[2])))
+    model.add(LSTM(units, return_sequences=False))
+    model.add(Dense(X_train.shape[2]))  # Number of features as output
+    model.compile(optimizer=optimizer, loss='mean_squared_error')
+
+    model.fit(X_train, y_train, epochs=20, batch_size=batch_size, verbose=0)
+    predictions = model.predict(X_test)
+    mse = mean_squared_error(y_test, predictions)
+    return mse
+
+
+# %% [code] {"execution":{"iopub.status.busy":"2024-12-30T21:38:08.749183Z","iopub.execute_input":"2024-12-30T21:38:08.749467Z","iopub.status.idle":"2024-12-30T21:42:01.756679Z","shell.execute_reply.started":"2024-12-30T21:38:08.749444Z","shell.execute_reply":"2024-12-30T21:42:01.755668Z"}}
 starttime1 = datetime.now()
 study = optuna.create_study(direction='minimize')
-study.optimize(objective, n_trials=1)
+study.optimize(objective, n_trials=50)
 
 endtime1= datetime.now()
 print(f"Best trial: {study.best_trial.params}")
 print(f"Time used for the tuning: {endtime1-starttime1}.")
 
 
-# %% [markdown]
-# ## 5. Apply the best model for forecasting
+# %% [code] {"execution":{"iopub.status.busy":"2024-12-30T21:42:01.757723Z","iopub.execute_input":"2024-12-30T21:42:01.758069Z","iopub.status.idle":"2024-12-30T21:42:01.859589Z","shell.execute_reply.started":"2024-12-30T21:42:01.758044Z","shell.execute_reply":"2024-12-30T21:42:01.858708Z"}}
+# Set seeds
+import random
 
-# %% [code] {"execution":{"iopub.status.busy":"2024-12-27T17:45:21.834347Z","iopub.execute_input":"2024-12-27T17:45:21.834708Z","iopub.status.idle":"2024-12-27T17:45:21.840445Z","shell.execute_reply.started":"2024-12-27T17:45:21.834682Z","shell.execute_reply":"2024-12-27T17:45:21.83927Z"}}
+import tensorflow as tf
+import os
+seed_value = 42
+random.seed(seed_value)
+np.random.seed(seed_value)
+tf.random.set_seed(seed_value)
+
+# Optionally, disable non-deterministic ops in TensorFlow
+os.environ['TF_DETERMINISTIC_OPS'] = '1'
+
+
+# %% [code] {"execution":{"iopub.status.busy":"2024-12-30T21:42:01.861144Z","iopub.execute_input":"2024-12-30T21:42:01.861478Z","iopub.status.idle":"2024-12-30T21:42:06.801671Z","shell.execute_reply.started":"2024-12-30T21:42:01.861453Z","shell.execute_reply":"2024-12-30T21:42:06.800603Z"}}
 best_params = study.best_trial.params
-print(best_params)
 
-# %% [code] {"execution":{"iopub.status.busy":"2024-12-27T17:45:29.956737Z","iopub.execute_input":"2024-12-27T17:45:29.957105Z","iopub.status.idle":"2024-12-27T17:45:29.963643Z","shell.execute_reply.started":"2024-12-27T17:45:29.957078Z","shell.execute_reply":"2024-12-27T17:45:29.962496Z"}}
-study.best_trial.values
+if best_params['optimizer'] == 'adam':
+    optimizer = Adam(learning_rate=best_params['learning_rate'])
+else:
+    optimizer = RMSprop(learning_rate=best_params['learning_rate'])
 
-# %% [code] {"execution":{"iopub.status.busy":"2024-12-27T20:41:07.174716Z","iopub.execute_input":"2024-12-27T20:41:07.175225Z","iopub.status.idle":"2024-12-27T20:41:07.807179Z","shell.execute_reply.started":"2024-12-27T20:41:07.17518Z","shell.execute_reply":"2024-12-27T20:41:07.806215Z"}}
-import optuna.visualization as vis
+model = Sequential()
+model.add(LSTM(best_params['units'], return_sequences=True, input_shape=(time_step, X_train.shape[2])))
+model.add(LSTM(best_params['units'], return_sequences=False))
+model.add(Dense(X_train.shape[2]))  # Number of features as output
+model.compile(optimizer=optimizer, loss='mean_squared_error')
 
-# Plot optimization history
-vis.plot_optimization_history(study)
-
-
-# %% [code] {"execution":{"iopub.status.busy":"2024-12-27T20:41:22.630409Z","iopub.execute_input":"2024-12-27T20:41:22.630743Z","iopub.status.idle":"2024-12-27T20:41:22.690287Z","shell.execute_reply.started":"2024-12-27T20:41:22.630715Z","shell.execute_reply":"2024-12-27T20:41:22.689247Z"}}
-vis.plot_parallel_coordinate(study, params = ['scaler','look_back','dropout_rate'])
-
-# %% [code]
-vis.plot_param_importances(study)
+model.fit(X_train, y_train, epochs=20, batch_size=best_params['batch_size'], verbose=0)
 
 
-# %% [code] {"execution":{"execution_failed":"2024-12-27T14:25:17.807Z"}}
+# %% [code] {"execution":{"iopub.status.busy":"2024-12-30T21:42:06.802655Z","iopub.execute_input":"2024-12-30T21:42:06.802981Z","iopub.status.idle":"2024-12-30T21:42:06.808845Z","shell.execute_reply.started":"2024-12-30T21:42:06.802958Z","shell.execute_reply":"2024-12-30T21:42:06.807747Z"}}
+# Get the last month in the dataframe
+last_month = testdata.index[-1]
+
+# Calculate the number of steps ahead needed for the forecast
+steps_ahead = (fcst_mon.year - last_month.year) * 12 + (fcst_mon.month - last_month.month)
+print("Steps ahead: ", steps_ahead)
+
+# %% [code] {"execution":{"iopub.status.busy":"2024-12-30T21:42:06.809693Z","iopub.execute_input":"2024-12-30T21:42:06.810027Z","iopub.status.idle":"2024-12-30T21:42:07.212143Z","shell.execute_reply.started":"2024-12-30T21:42:06.809985Z","shell.execute_reply":"2024-12-30T21:42:07.211125Z"}}
+# Initialize the last_data with the last 12 months of data
+last_data = scaled_data[-time_step:]
+last_data = last_data.reshape((1, time_step, X_train.shape[2]))
+
+# Perform the necessary one-step-ahead forecasts
+for _ in range(steps_ahead):
+    forecast = model.predict(last_data)
+    last_data = np.append(last_data[:, 1:, :], forecast.reshape(1, 1, X_train.shape[2]), axis=1)
+
+# Inverse transform the final forecast
+final_forecast = scaler.inverse_transform(forecast)
+print(f"Forecast for {fcst_mon}: {final_forecast}")
+
+
+# %% [code] {"execution":{"iopub.status.busy":"2024-12-30T21:42:07.213256Z","iopub.execute_input":"2024-12-30T21:42:07.213635Z","iopub.status.idle":"2024-12-30T21:42:07.231032Z","shell.execute_reply.started":"2024-12-30T21:42:07.213600Z","shell.execute_reply":"2024-12-30T21:42:07.230250Z"}}
+forecast_df = pd.DataFrame(final_forecast)
+forecast_df = forecast_df.applymap(lambda x: round(x, 1))
+forecast_df.columns = testdata.columns
+forecast_df.unstack()
+
+# %% [code] {"execution":{"iopub.status.busy":"2024-12-30T21:42:07.231915Z","iopub.execute_input":"2024-12-30T21:42:07.232198Z","iopub.status.idle":"2024-12-30T21:42:07.236071Z","shell.execute_reply.started":"2024-12-30T21:42:07.232138Z","shell.execute_reply":"2024-12-30T21:42:07.235018Z"}}
 #pd.reset_option('display.precision')
 
-# %% [code] {"jupyter":{"outputs_hidden":false},"execution":{"execution_failed":"2024-12-27T14:25:17.807Z"}}
+# %% [code] {"jupyter":{"outputs_hidden":false},"execution":{"iopub.status.busy":"2024-12-30T21:42:07.236979Z","iopub.execute_input":"2024-12-30T21:42:07.237301Z","iopub.status.idle":"2024-12-30T21:42:07.253621Z","shell.execute_reply.started":"2024-12-30T21:42:07.237278Z","shell.execute_reply":"2024-12-30T21:42:07.252654Z"}}
 endtime = datetime.now()
+print(endtime)
 print(endtime-starttime)
